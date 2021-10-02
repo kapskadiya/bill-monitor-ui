@@ -1,23 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import NavBar from "./components/Nav/NavBar";
+import { Switch, Route } from "react-router-dom";
+import Home from "./routes/Home/Home";
+import Login from "./routes/Login/Login";
+import Registration from "./routes/Registration/Registration";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    console.log("App component did mount");
+    if (localStorage.getItem("token") != null) {
+      setUser(localStorage.getItem("user"));
+    }
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {console.log("App component is rendering")}
+      <NavBar user={user} setUser={setUser} />
+
+      <Switch>
+        <Route path="/" exact={true} component={() => <Home user={user} />} />
+        <div className="outer">
+          <div className="inner">
+            <Route
+              path="/login"
+              exact={true}
+              component={() => <Login setUser={setUser} />}
+            />
+            <Route path="/registration" exact={true} component={Registration} />
+          </div>
+        </div>
+      </Switch>
     </div>
   );
 }

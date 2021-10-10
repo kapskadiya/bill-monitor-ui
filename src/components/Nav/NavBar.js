@@ -10,7 +10,7 @@ function NavBar(props) {
 
   if (props.user == null) {
     authButton = (
-      <ul className="navbar-nav mr-auto">
+      <ul className="navbar-nav">
         <li className="nav-item">
           <Link className="nav-link" to={"/login"}>
             Login
@@ -25,7 +25,7 @@ function NavBar(props) {
     );
   } else {
     authButton = (
-      <ul className="navbar-nav mr-auto">
+      <ul className="navbar-nav">
         <li className="nav-item">
           <Link className="nav-link" to={"/"} onClick={handleLogout}>
             Logout
@@ -36,7 +36,7 @@ function NavBar(props) {
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
       <div className="container">
         <div className="float-left">
           <Link className="navbar-brand mb-0" to={"/"}>
@@ -44,21 +44,21 @@ function NavBar(props) {
           </Link>
         </div>
 
-        <div className="float-right">
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            {authButton}
-          </div>
+        <div
+          className="collapse navbar-collapse justify-content-end"
+          id="navbarSupportedContent">
+          {authButton}
         </div>
       </div>
     </nav>

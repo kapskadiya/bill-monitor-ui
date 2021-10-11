@@ -22,23 +22,15 @@ function App() {
       <NavBar user={user} setUser={setUser} />
 
       <Switch>
-        <Route path="/" exact={true} component={() => <Home user={user} />} />
-        <div className="container">
-          <div className="outer">
-            <div className="inner">
-              <Route
-                path="/login"
-                exact={true}
-                component={() => <Login setUser={setUser} />}
-              />
-              <Route
-                path="/registration"
-                exact={true}
-                component={Registration}
-              />
-            </div>
-          </div>
-        </div>
+        <>
+          <Route path="/" exact={true} component={() => <Home user={user} />} />
+          <Route
+            path="/login"
+            exact={true}
+            component={() => <Login setUser={setUser} />}
+          />
+          <Route path="/registration" exact={true} component={Registration} />
+        </>
       </Switch>
     </div>
   );

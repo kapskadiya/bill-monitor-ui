@@ -1,22 +1,22 @@
 import axios from "axios";
 import { useState } from "react";
 import { Redirect } from "react-router";
+import Spinner from "../../components/Spinner";
 import "./Login.css";
 
 function Login(props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const options = {
       url: "rest/usermanagement/auth/login",
       method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-      },
       data: {
         username: username,
         password: password,
@@ -35,48 +35,61 @@ function Login(props) {
           props.setUser(JSON.stringify(response.data.success.user));
         } else {
           const reason = response.data.failure.reason;
-          console.log(reason);
+          setErrorMessage(reason);
+          console.log("reason" + reason);
         }
       })
       .catch((error) => {
         console.log(error);
-        alert("Sorry, something went wrong.");
+        setErrorMessage("Sorry, something went wrong.");
       })
       .finally(() => {
-        console.log(localStorage.getItem("token"));
+        setIsLoading(false);
       });
   };
 
   if (isLoggedIn) {
     return <Redirect to={"/"} />;
   } else {
-    return (
-      <form onSubmit={handleSubmit}>
-        <h3>Log In</h3>
-
-        <div className="form-group">
-          <label>User Name</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="User Name"
-            onChange={(e) => setUsername(e.target.value)}
-          />
+    if (isLoading) {
+      return <Spinner />;
+    } else {
+      return (
+        <div className="container">
+          <div className="outer">
+            <div className="inner">
+              <form onSubmit={handleSubmit}>
+                <h3>Log In</h3>
+                {errorMessage && (
+                  <p className="alert alert-danger" role="alert">
+                    {errorMessage}
+                  </p>
+                )}
+                <div className="form-group">
+                  <label>User Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="User Name"
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                <button className="btn btn-primary btn-block">Log In</button>
+              </form>
+            </div>
+          </div>
         </div>
-
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
-        <button className="btn btn-primary btn-block">Log In</button>
-      </form>
-    );
+      );
+    }
   }
 }
 

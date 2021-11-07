@@ -1,15 +1,11 @@
-import Dashboard from "../Dashboard/Dashboard";
+import { Redirect } from "react-router";
 import "./Home.css";
 
 function Home(props) {
   if (props.user != null) {
-    const user = JSON.parse(props.user);
     return (
       <div>
-        <h3>
-          Hi {user.firstname} {user.lastname}
-        </h3>
-        <Dashboard user={user} />
+        <Redirect to="/billmonitor/dashboard" />
       </div>
     );
   } else {

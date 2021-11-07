@@ -5,6 +5,8 @@ import Home from "./routes/Home/Home";
 import Login from "./routes/Login/Login";
 import Registration from "./routes/Registration/Registration";
 import { useEffect, useState } from "react";
+import Dashboard from "./routes/Dashboard/Dashboard";
+import Account from "./routes/Account/Account";
 
 function App() {
   const [user, setUser] = useState();
@@ -25,11 +27,30 @@ function App() {
         <>
           <Route path="/" exact={true} component={() => <Home user={user} />} />
           <Route
-            path="/login"
+            path="/billmonitor/home"
+            exact={true}
+            component={() => <Home user={user} />}
+          />
+          <Route
+            path="/billmonitor/login"
             exact={true}
             component={() => <Login setUser={setUser} />}
           />
-          <Route path="/registration" exact={true} component={Registration} />
+          <Route
+            path="/billmonitor/registration"
+            exact={true}
+            component={Registration}
+          />
+          <Route
+            path="/billmonitor/dashboard"
+            exact={true}
+            component={() => <Dashboard user={user} />}
+          />
+          <Route
+            path="/billmonitor/manageAccount"
+            exact={true}
+            component={() => <Account user={user} />}
+          />
         </>
       </Switch>
     </div>

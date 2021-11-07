@@ -1,47 +1,48 @@
 import axios from "axios";
 import { useState } from "react";
 import { Redirect } from "react-router";
-import Spinner from "../../components/Spinner";
+import Spinner from "../../components/Spinner/Spinner";
 import "./Login.css";
 
 function Login(props) {
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
     const options = {
-      url: "rest/usermanagement/auth/login",
+      url: "rest/admin/auth/login",
       method: "POST",
       data: {
-        username: username,
+        email: email,
         password: password,
       },
     };
 
     axios(options)
       .then((response) => {
-        if (response.data.success.token != null) {
-          localStorage.setItem("token", response.data.success.token);
-          localStorage.setItem(
-            "user",
-            JSON.stringify(response.data.success.user)
-          );
+        if (response.data.success && response.data.data.token != null) {
+          localStorage.setItem("token", response.data.data.token);
+          localStorage.setItem("user", JSON.stringify(response.data.data.user));
           setIsLoggedIn(true);
-          props.setUser(JSON.stringify(response.data.success.user));
+          props.setUser(JSON.stringify(response.data.data.user));
         } else {
-          const reason = response.data.failure.reason;
+          const reason = response.data.message;
           setErrorMessage(reason);
           console.log("reason" + reason);
         }
       })
       .catch((error) => {
         console.log(error);
-        setErrorMessage("Sorry, something went wrong.");
+        if (error.response && error.response.status === 404) {
+          setErrorMessage("User is not found");
+        } else {
+          setErrorMessage("Sorry, something went wrong.");
+        }
       })
       .finally(() => {
         setIsLoading(false);
@@ -49,7 +50,7 @@ function Login(props) {
   };
 
   if (isLoggedIn) {
-    return <Redirect to={"/"} />;
+    return <Redirect to={"/billmonitor/home"} />;
   } else {
     if (isLoading) {
       return <Spinner />;
@@ -66,12 +67,12 @@ function Login(props) {
                   </p>
                 )}
                 <div className="form-group">
-                  <label>User Name</label>
+                  <label>Email</label>
                   <input
-                    type="text"
+                    type="email"
                     className="form-control"
-                    placeholder="User Name"
-                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Email"
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="form-group">

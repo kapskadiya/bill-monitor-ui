@@ -1,33 +1,44 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Bar } from "react-chartjs-2";
-import Spinner from "../Spinner";
+import Spinner from "../Spinner/Spinner";
 
 function MonthVsAmountChart() {
+  const rendered = useRef(false);
   const [rawData, setRawData] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
+    fetchData();
+    return () => {
+      rendered.current = true;
+    };
+  }, []);
+
+  async function fetchData() {
     const options = {
-      url: "rest/analytics/monthAndAmount/ELECTRICITY",
-      method: "GET",
+      url: "rest/analytics/amountAndTime",
+      method: "POST",
+      data: {
+        billType: "electricity",
+        timeIn: "month",
+      },
     };
 
-    console.log("chart: " + options);
     axios(options)
       .then((response) => {
-        setRawData(response.data);
+        if (!rendered.current) {
+          setRawData(response.data.data);
+        }
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.response);
         setErrorMessage("Sorry, something went wrong.");
-      })
-      .finally(() => {
-        setIsLoading(false);
       });
-  }, []);
+    setIsLoading(false);
+  }
 
   const getChartData = () => {
     if (Object.keys(rawData).length !== 0) {
@@ -35,15 +46,15 @@ function MonthVsAmountChart() {
       var valueList = [];
 
       Object.keys(rawData).forEach((key, i) => {
-        labelList.push(key);
-        valueList.push(rawData[key]);
+        labelList.push(rawData[key].xValue);
+        valueList.push(rawData[key].yValue);
       });
 
       const chartData = {
         labels: labelList,
         datasets: [
           {
-            label: "MonthVsAmount",
+            label: "#amount",
             backgroundColor: "rgba(75,192,192,1)",
             borderColor: "rgba(0,0,0,1)",
             borderWidth: 2,

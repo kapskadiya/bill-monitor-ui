@@ -1,4 +1,4 @@
-import Widget from "../../components/Widget";
+import Widget from "../../components/Widget/Widget";
 import MonthVsAmountChart from "../../components/Widget/MonthVsAmountChart";
 
 function Dashboard(props) {

@@ -1,0 +1,31 @@
+#sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  min-height: 86vh;
+  transition: all 0.3s;
+  border-right: 1px solid black;
+}
+
+#sidebar.active {
+  margin-left: -250px;
+}
+
+#sidebar ul.components {
+  padding: 20px 0;
+}
+
+#sidebar ul p {
+  padding: 10px;
+}
+
+#sidebar ul li a {
+  padding: 10px;
+  font-size: 1.1em;
+  display: block;
+}
+
+ul ul a {
+  font-size: 0.9em !important;
+  padding-left: 30px !important;
+  background: #6d7fcc;
+}

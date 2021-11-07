@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Redirect } from "react-router";
-import Spinner from "../../components/Spinner";
+import Spinner from "../../components/Spinner/Spinner";
 import "./Registration.css";
 
 function Registration() {

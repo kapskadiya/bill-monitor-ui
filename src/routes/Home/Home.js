@@ -3,11 +3,7 @@ import "./Home.css";
 
 function Home(props) {
   if (props.user != null) {
-    return (
-      <div>
-        <Redirect to="/billmonitor/dashboard" />
-      </div>
-    );
+    return <Redirect to="/billmonitor/dashboard" />;
   } else {
     return (
       <div>

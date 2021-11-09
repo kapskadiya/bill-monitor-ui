@@ -7,8 +7,6 @@ import axios from "axios";
 import { BrowserRouter } from "react-router-dom";
 
 axios.defaults.baseURL = "http://localhost:8080/";
-axios.defaults.headers.common["Authorization"] =
-  "Bearer " + localStorage.getItem("token");
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] =
   "application/json;charset=UTF-8";

@@ -8,7 +8,9 @@ function Sidebar(props) {
   return (
     <nav id="sidebar">
       <ul className="list-unstyled components">
-        <p>Manage Account</p>
+        <div className="sidebar-header">
+          <h5>Manage Account</h5>
+        </div>
         <li>
           <button
             className="btn btn-link"

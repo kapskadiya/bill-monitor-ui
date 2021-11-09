@@ -56,7 +56,7 @@ function NavBar(props) {
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <div className="container">
         <div className="float-left">
           <img src={logo} alt="Logo" width="50" height="50"></img>

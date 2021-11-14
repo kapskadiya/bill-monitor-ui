@@ -28,7 +28,9 @@ function Login(props) {
         if (response.data.success && response.data.data.token != null) {
           localStorage.setItem("token", response.data.data.token);
           localStorage.setItem("user", JSON.stringify(response.data.data.user));
+
           setIsLoggedIn(true);
+
           props.setUser(JSON.stringify(response.data.data.user));
         } else {
           const reason = response.data.message;
@@ -38,15 +40,17 @@ function Login(props) {
       })
       .catch((error) => {
         console.log(error);
-        if (error.response && error.response.status === 404) {
-          setErrorMessage("User is not found");
-        } else {
-          setErrorMessage("Sorry, something went wrong.");
+        let message = "Sorry, something went wrong.";
+        if (error.response) {
+          if (error.response.status === 404) {
+            message = "User is not found";
+          } else if (error.response.status === 401) {
+            message = "Invalid authentication";
+          }
         }
-      })
-      .finally(() => {
-        setIsLoading(false);
+        setErrorMessage(message);
       });
+    setIsLoading(false);
   };
 
   if (isLoggedIn) {
@@ -56,36 +60,44 @@ function Login(props) {
       return <Spinner />;
     } else {
       return (
-        <div className="container">
-          <div className="outer">
-            <div className="inner">
-              <form onSubmit={handleSubmit}>
-                <h3>Log In</h3>
-                {errorMessage && (
-                  <p className="alert alert-danger" role="alert">
-                    {errorMessage}
-                  </p>
-                )}
-                <div className="form-group">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    placeholder="Email"
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Password</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    placeholder="Password"
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
-                <button className="btn btn-primary btn-block">Log In</button>
-              </form>
+        <div className="billmonitor-bg">
+          <div className="container">
+            <div className="outer">
+              <div className="inner">
+                <form onSubmit={handleSubmit}>
+                  <h3>Log In</h3>
+                  {errorMessage && (
+                    <p className="alert alert-danger" role="alert">
+                      {errorMessage}
+                    </p>
+                  )}
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      placeholder="Email"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      placeholder="Password"
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                  <button className="btn btn-primary btn-block">Log In</button>
+                </form>
+
+                <a
+                  className="font-change d-flex justify-content-center text-center"
+                  href="/billmonitor/registration">
+                  User is not register? Go to here!
+                </a>
+              </div>
             </div>
           </div>
         </div>

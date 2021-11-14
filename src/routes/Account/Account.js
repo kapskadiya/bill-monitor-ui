@@ -10,7 +10,7 @@ function Account(props) {
     return (
       <div className="wrapper">
         <Sidebar user={props.user} setContent={setContent} />
-        <Content user={props.user} content={content} />
+        <Content user={props.user} content={content} setUser={props.setUser} />
       </div>
     );
   } else {

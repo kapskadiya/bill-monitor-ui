@@ -9,10 +9,10 @@ import Dashboard from "./routes/Dashboard/Dashboard";
 import Account from "./routes/Account/Account";
 import axios from "axios";
 
-axios.defaults.headers.common["Authorization"] =
-  "Bearer " + localStorage.getItem("token");
-
 function App() {
+  axios.defaults.headers.common["Authorization"] =
+    "Bearer " + localStorage.getItem("token");
+
   const [user, setUser] = useState();
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function App() {
             <Route
               path="/billmonitor/manageAccount"
               exact={true}
-              component={() => <Account user={user} />}
+              component={() => <Account user={user} setUser={setUser} />}
             />
           </>
         </Switch>

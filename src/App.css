@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+.effective-body {
+  padding-top: 73.57px;
+  width: 100%;
+  height: 100%;
+}
+
+.billmonitor-bg {
+  background-image: url("./resources/a2.jpeg");
+  min-height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

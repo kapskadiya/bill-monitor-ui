@@ -34,8 +34,16 @@ function MonthVsAmountChart() {
         }
       })
       .catch((error) => {
-        console.log(error.response);
-        setErrorMessage("Sorry, something went wrong.");
+        console.log(error);
+        let message = "Sorry, something went wrong.";
+        if (error.response) {
+          if (error.response.status === 404) {
+            message = "User is not found";
+          } else if (error.response.status === 401) {
+            message = "Invalid authentication";
+          }
+        }
+        setErrorMessage(message);
       });
     setIsLoading(false);
   }

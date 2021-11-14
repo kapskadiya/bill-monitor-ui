@@ -10,58 +10,59 @@ function UserDetail(props) {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [isUpdated, setIsUpdated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [services, setServices] = useState();
 
   useEffect(() => {
+    setIsLoading(true);
+
+    async function getUserDetails() {
+      if (props.user != null) {
+        const user = JSON.parse(props.user);
+        const options = {
+          url: "rest/admin/user/email/" + user.email,
+          method: "GET",
+        };
+
+        axios(options)
+          .then((response) => {
+            if (!rendered.current) {
+              if (response.data.data != null) {
+                const userData = response.data.data;
+                setFirstname(userData.firstname);
+                setLastname(userData.lastname);
+                setEmail(userData.email);
+                setServices(userData.services);
+              } else {
+                setErrorMessage("User is not found");
+              }
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            let message = "Sorry, something went wrong.";
+            if (error.response) {
+              if (error.response.status === 404) {
+                message = "User is not found";
+              } else if (error.response.status === 401) {
+                message = "User is not logged in";
+              }
+            }
+            setErrorMessage(message);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }
+    }
+
     getUserDetails();
 
     return () => {
       rendered.current = true;
     };
-  });
-
-  function getUserDetails() {
-    console.log("getUser");
-    if (props.user != null) {
-      const user = JSON.parse(props.user);
-      const options = {
-        url: "rest/admin/user/email/" + user.email,
-        method: "GET",
-      };
-
-      axios(options)
-        .then((response) => {
-          if (!rendered.current) {
-            if (response.data.data != null) {
-              const userData = response.data.data;
-              setFirstname(userData.firstname);
-              setLastname(userData.lastname);
-              setEmail(userData.email);
-              setServices(userData.services);
-            } else {
-              setErrorMessage("User is not found");
-            }
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          let message = "Sorry, something went wrong.";
-          if (error.response) {
-            if (error.response.status === 404) {
-              message = "User is not found";
-            } else if (error.response.status === 401) {
-              message = "User is not logged in";
-            }
-          }
-          setErrorMessage(message);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  }
+  }, [props.user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -122,23 +123,25 @@ function UserDetail(props) {
 
   const prepareServiceInputData = () => {
     var serviceInput = [];
-    console.log("servcie");
 
-    Object.keys(services).forEach((key, i) => {
-      serviceInput.push(
-        <div key={key} className="form-group">
-          <label>{services[key].name}</label>
-          <input
-            type="text"
-            className="form-control"
-            value={services[key].number}
-            disabled={isDisabled}
-            onChange={(e) => updateServices(services[key].name, e.target.value)}
-          />
-        </div>
-      );
-    });
-
+    if (services != null) {
+      Object.keys(services).forEach((key, i) => {
+        serviceInput.push(
+          <div key={key} className="form-group">
+            <label>{services[key].name}</label>
+            <input
+              type="text"
+              className="form-control"
+              value={services[key].number}
+              disabled={isDisabled}
+              onChange={(e) =>
+                updateServices(services[key].name, e.target.value)
+              }
+            />
+          </div>
+        );
+      });
+    }
     return serviceInput;
   };
 

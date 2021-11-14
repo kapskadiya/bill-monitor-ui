@@ -1,3 +1,25 @@
-.home-body {
-  padding-top: 5rem;
+.center {
+  height: 100%;
+  display: inline-flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.bg-color {
+  background-color: aquamarine;
+}
+
+.center a {
+  text-decoration: none;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 5px;
+  color: black;
+  transition: 1s ease-in-out;
+}
+
+.center a:hover {
+  background-color: black;
+  color: white;
 }

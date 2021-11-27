@@ -43,10 +43,10 @@ function UserDetail(props) {
             console.log(error);
             let message = "Sorry, something went wrong.";
             if (error.response) {
-              if (error.response.status === 404) {
-                message = "User is not found";
-              } else if (error.response.status === 401) {
-                message = "User is not logged in";
+              if (error.response.status === 401) {
+                message = "User is not authenticated";
+              } else {
+                message = error.response.data.message;
               }
             }
             setErrorMessage(message);
@@ -93,10 +93,10 @@ function UserDetail(props) {
         console.log(error);
         let message = "Sorry, something went wrong.";
         if (error.response) {
-          if (error.response.status === 404) {
-            message = "User is not found";
-          } else if (error.response.status === 401) {
-            message = "User is not logged in";
+          if (error.response.status === 401) {
+            message = "User is not authenticated";
+          } else {
+            message = error.response.data.message;
           }
         }
         setErrorMessage(message);

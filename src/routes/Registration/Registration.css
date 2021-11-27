@@ -22,8 +22,19 @@
 }
 
 .service-btn button:hover {
-  background-color: #2ee59d;
+  background-color: dimgrey;
   box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
   color: #fff;
   transform: translateY(-4px);
+}
+
+.icon {
+  cursor: pointer;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.btn-bg {
+  background-color: dimgrey;
 }

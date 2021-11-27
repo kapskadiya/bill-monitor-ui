@@ -31,10 +31,10 @@ function Settings(props) {
           console.log(error);
           let message = "Sorry, something went wrong.";
           if (error.response) {
-            if (error.response.status === 404) {
-              message = "User is not found";
-            } else if (error.response.status === 401) {
-              message = "User is not logged in";
+            if (error.response.status === 401) {
+              message = "User is not authenticated";
+            } else {
+              message = error.response.data.message;
             }
           }
           setErrorMessage(message);
@@ -48,6 +48,24 @@ function Settings(props) {
   const handleLogout = () => {
     localStorage.clear();
     props.setUser(null);
+  };
+
+  const prepareDeleteDisplay = () => {
+    if (props.user.isDeleted) {
+      return (
+        <div className="d-flex justify-content-between mb-3">
+          <p>Delete your account</p>
+          <button
+            type="button"
+            className="btn btn-danger btn-sm"
+            onClick={(e) => handleDelete(e)}>
+            DELETE
+          </button>
+        </div>
+      );
+    } else {
+      return <span></span>;
+    }
   };
 
   if (deleted) {
@@ -65,6 +83,11 @@ function Settings(props) {
       return (
         <div className="content-body">
           <div className="container">
+            {errorMessage && (
+              <p className="alert alert-danger" role="alert">
+                {errorMessage}
+              </p>
+            )}
             <div className="d-flex justify-content-between mb-3 mt-3">
               <p>Change the language</p>
               <select
@@ -77,20 +100,7 @@ function Settings(props) {
                 <option value="spanish">Spanish</option>
               </select>
             </div>
-            <div className="d-flex justify-content-between mb-3">
-              {errorMessage && (
-                <p className="alert alert-danger" role="alert">
-                  {errorMessage}
-                </p>
-              )}
-              <p>Delete your account</p>
-              <button
-                type="button"
-                className="btn btn-danger btn-sm"
-                onClick={(e) => handleDelete(e)}>
-                DELETE
-              </button>
-            </div>
+            {prepareDeleteDisplay}
           </div>
         </div>
       );

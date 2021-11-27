@@ -1,5 +1,7 @@
+import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Redirect } from "react-router";
 import Spinner from "../../components/Spinner/Spinner";
 import "./Registration.css";
@@ -12,41 +14,86 @@ function Registration() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isRegister, setIsRegister] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [serviceList, setServiceList] = useState([
-    "DTH",
-    "GAS",
-    "Broadband",
-    "Electrisity",
-    "Mobile Recharge",
-  ]);
+  const [serviceList, setServiceList] = useState([]);
   const [serviceInputList, setServiceInputList] = useState([]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const options = {
+      url: "rest/billtype/getAll",
+      method: "GET",
+    };
+
+    axios(options)
+      .then((response) => {
+        if (response.data.success && response.data.data != null) {
+          const dataList = response.data.data;
+          const tempServiceList = [];
+          dataList.forEach((service) => {
+            tempServiceList.push(service.type);
+          });
+
+          setServiceList(tempServiceList);
+        } else {
+          const reason = response.data.message;
+          setErrorMessage(reason);
+          console.log("reason" + reason);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        let message = "Sorry, something went wrong.";
+        if (error.response) {
+          if (error.response.status === 401) {
+            message = "User is not authenticated";
+          } else {
+            message = error.response.data.message;
+          }
+        }
+        setErrorMessage(message);
+      });
+
+    setIsLoading(false);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
     const options = {
-      url: "rest/usermanagement/user/add",
+      url: "rest/admin/user/create",
       method: "POST",
       data: {
         firstname: firstname,
         lastname: lastname,
         password: password,
         email: email,
+        services: serviceInputList,
       },
     };
 
     axios(options)
       .then((response) => {
-        if (response.data.success.isSaved) {
+        if (response.data.success) {
+          alert("User is successfully register!");
           setIsRegister(true);
         } else {
-          const reason = response.data.failure.reason;
+          const reason = response.data.message;
           setErrorMessage(reason);
+          console.log("reason" + reason);
         }
       })
       .catch((error) => {
-        console.log(error);
-        setErrorMessage("Sorry, something went wrong.");
+        let message = "Sorry, something went wrong.";
+        if (error.response) {
+          if (error.response.status === 404) {
+            message = "User is not found";
+          } else if (error.response.status === 401) {
+            message = "Invalid authentication";
+          } else {
+            message = error.response.data.message;
+          }
+        }
+        setErrorMessage(message);
       })
       .finally(() => {
         setIsLoading(false);
@@ -72,7 +119,8 @@ function Registration() {
 
     // Add selected service to the service inputs
     const intupElement = serviceList.filter((item) => item === e.target.value);
-    serviceInputList.push(intupElement);
+
+    serviceInputList.push({ name: intupElement[0], number: "" });
 
     // Remove selected service from service buttons
     const newServiceList = serviceList.filter(
@@ -87,17 +135,25 @@ function Registration() {
     var inputs = [];
     for (let i = 0; i < list.length; i++) {
       inputs.push(
-        <div key={i} className="d-flex justify-content-end">
-          <input
-            type="text"
-            className="form-control"
-            value={list[i]}
-            disabled={true}
-          />
-          <input type="text" className="form-control" placeholder="value" />
-          <button onClick={removeServiceInput} value={list[i]}>
-            Remove
-          </button>
+        <div key={i} className="form-group">
+          <label>{list[i].name}</label>
+          <div className="d-flex justify-content-end">
+            <input
+              key={i}
+              type="text"
+              className="form-control"
+              placeholder="value"
+              onChange={(e) => updateServiceValue(list[i].name, e.target.value)}
+              value={list[i].value}
+            />
+
+            <div className="icon">
+              <FontAwesomeIcon
+                onClick={() => removeServiceInput(list[i].name)}
+                icon={faMinusCircle}
+              />
+            </div>
+          </div>
         </div>
       );
     }
@@ -105,22 +161,28 @@ function Registration() {
     return inputs;
   }
 
-  function removeServiceInput(e) {
-    e.preventDefault();
+  function removeServiceInput(val) {
+    const service = String(val);
 
-    const inputList = serviceInputList.filter(
-      (item) => String(item) !== e.target.value
-    );
+    const inputList = serviceInputList.filter((item) => item.name !== service);
 
     // Add removed service to the service buttons
-    serviceList.push(e.target.value);
+    serviceList.push(service);
     setServiceList(serviceList);
 
     setServiceInputList(inputList);
   }
 
+  function updateServiceValue(name, number) {
+    const arr = [...serviceInputList];
+    const obj = arr.find((o) => o.name === String(name));
+
+    obj.number = number;
+    setServiceInputList(arr);
+  }
+
   if (isRegister) {
-    return <Redirect to={"/login"} />;
+    return <Redirect to={"/billmonitor/login"} />;
   } else {
     if (isLoading) {
       return <Spinner />;
@@ -180,7 +242,6 @@ function Registration() {
                     <label>Service</label>
 
                     <div>
-                      <label>Add service</label>
                       <div className="service-btn">
                         {prepareServiceBtns(serviceList)}
                       </div>
